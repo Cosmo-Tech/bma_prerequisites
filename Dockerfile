@@ -44,6 +44,7 @@ RUN ln -s /Tooling/terraform terraform
 
 
 RUN mkdir /BMA
+VOLUME /BMA
 WORKDIR /BMA
 
 ENTRYPOINT [ "bash" ]
