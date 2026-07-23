@@ -133,20 +133,8 @@ WORKDIR /home/ToolingBins/
 RUN ln -s /usr/bin/kubectl kubectl
 
 # Install Azure CLI as in https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt
-# Download and install the Microsoft signing key:
-RUN mkdir -p /etc/apt/keyrings
-RUN curl -sLS https://packages.microsoft.com/keys/microsoft.asc | \
-        gpg --dearmor | tee /etc/apt/keyrings/microsoft.gpg > /dev/null
-RUN chmod go+r /etc/apt/keyrings/microsoft.gpg
-# Add the Azure CLI software repository
-# The standard way to get the distribution is to use lsb_release, but it returns trixie which is not yet supported by the Azure CLI package repository:
-# RUN AZ_DIST=$(lsb_release -cs)
-# I.e., the Azure CLI package is only available for Debian 12 (bookworm) at the moment, so we use bookworm as suite even if the base image is trixie.
-# This works because trixie is compatible with bookworm.
-ENV AZ_DIST=bookworm
-RUN echo "Types: deb \nURIs: https://packages.microsoft.com/repos/azure-cli/ \nSuites: ${AZ_DIST} \nComponents: main \nArchitectures: $(dpkg --print-architecture) \nSigned-by: /etc/apt/keyrings/microsoft.gpg" | tee /etc/apt/sources.list.d/azure-cli.sources
-# Update repository information and install the azure-cli package:
-RUN apt update && apt install -y azure-cli
+# Launch the script maintained by the Azure CLI team:
+RUN curl -fsSL 'https://azurecliprod.blob.core.windows.net/$root/deb_install.sh' | bash
 # Add az to ToolingBins
 WORKDIR /home/ToolingBins/
 RUN ln -s /usr/bin/az az
