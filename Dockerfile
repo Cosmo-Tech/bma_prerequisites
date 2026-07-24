@@ -112,6 +112,7 @@ Signed-By: /etc/apt/keyrings/docker.asc
 EOF
 # Install the Docker packages
 RUN apt update && apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# Allow running systemctl inside the container, as in https://shamsfiroz.medium.com/running-inside-a-docker-container-a-practical-guide-cf7b31195575
 VOLUME [ "/sys/fs/cgroup" ]
 CMD ["/sbin/init"]
 # Add docker to ToolingBins
@@ -149,7 +150,7 @@ RUN ln -s /usr/bin/az az
 # Install Terraform as in https://developer.hashicorp.com/terraform/install
 WORKDIR /home/Tooling/
 # Add HashiCorp repository
-RUN wget --no-check-certificate -O - https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+RUN wget -O - https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
 # Install Terraform
 RUN apt update && apt install -y terraform
@@ -163,7 +164,7 @@ RUN rm -rf /var/lib/apt/lists/* \
         && apt-get clean
 
 # Create a volume for shared data between the host and the container
-RUN mkdir /home/bma_babylon_folder
+RUN mkdir -p /home/bma_babylon_folder
 VOLUME /home/bma_babylon_folder
 
 # Display installed versions as a basic check that the tools are correctly installed and available in the PATH
