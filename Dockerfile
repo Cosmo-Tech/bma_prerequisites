@@ -102,7 +102,14 @@ RUN apt update && \
         curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && \
         chmod a+r /etc/apt/keyrings/docker.asc
 # Add the repository to Apt sources:
-RUN echo "Types: deb \nURIs: https://download.docker.com/linux/debian \nSuites: $(. /etc/os-release && echo "$VERSION_CODENAME") \nComponents: stable \nArchitectures: $(dpkg --print-architecture) \nSigned-By: /etc/apt/keyrings/docker.asc" | tee /etc/apt/sources.list.d/docker.sources
+RUN tee /etc/apt/sources.list.d/docker.sources > /dev/null <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/debian
+Suites: $(. /etc/os-release && echo "$VERSION_CODENAME")
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
 # Install the Docker packages
 RUN apt update && apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 VOLUME [ "/sys/fs/cgroup" ]
