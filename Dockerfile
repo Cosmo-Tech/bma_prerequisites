@@ -170,7 +170,7 @@ VOLUME /home/bma_babylon_folder
 # Display installed versions as a basic check that the tools are correctly installed and available in the PATH
 WORKDIR /home/
 RUN echo $(git version)
-RUN echo $(docker version)
+RUN echo $(docker --version)
 RUN echo $(babylon --version)
 RUN echo $(kubectl version --client)
 RUN echo $(az --version)

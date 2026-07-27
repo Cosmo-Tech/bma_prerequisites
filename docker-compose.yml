@@ -4,4 +4,4 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./BMA:/BMA
+      - ./bma_babylon_folder:/home/bma_babylon_folder
