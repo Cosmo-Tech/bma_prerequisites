@@ -52,6 +52,7 @@ RUN apt-get update \
         curl \
         wget \
         gnupg \
+        libcairo2 \
         lsb-release \
         ca-certificates \
         python3.13-venv \
@@ -126,6 +127,18 @@ RUN /home/.babylonenv/bin/pip install git+https://github.com/Cosmo-Tech/Babylon.
 WORKDIR /home/ToolingBins/
 RUN ln -sf /home/.babylonenv/bin/babylon babylon
 
+# Install csm-orc
+WORKDIR /home/Tooling/
+COPY --from=workspace run-orchestrator/ /home/Tooling/run-orchestrator/
+WORKDIR /home/Tooling/run-orchestrator/
+RUN rm -rf .git .github
+RUN python3 -m venv /home/Tooling/run-orchestrator/.csmorcenv
+RUN /home/Tooling/run-orchestrator/.csmorcenv/bin/pip install -r ./requirements.all.txt
+RUN /home/Tooling/run-orchestrator/.csmorcenv/bin/pip install cairocffi~=1.7.1 CairoSVG~=2.9.0
+# Add csm-orc to ToolingBins
+WORKDIR /home/ToolingBins/
+RUN ln -sf /home/Tooling/run-orchestrator/.csmorcenv/bin/csm-orc csm-orc
+
 # Install kubectl as in https://kubernetes.io/docs/tasks/tools/install-kubectl-linux
 WORKDIR /home/Tooling/
 # Download the public signing key for the Kubernetes package repositories:
@@ -172,6 +185,7 @@ WORKDIR /home/
 RUN echo $(git version)
 RUN echo $(docker --version)
 RUN echo $(babylon --version)
+RUN echo $(csm-orc --version)
 RUN echo $(kubectl version --client)
 RUN echo $(az --version)
 RUN echo $(terraform version)
