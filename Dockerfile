@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (C) 2010-2026 Cosmo Tech
 # SPDX-License-Identifier: LicenseRef-CosmoTech
 
-FROM debian:trixie as builder
+FROM debian:stable-20260713 as builder
 
 # Avoid prompts during installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -121,10 +121,10 @@ RUN ln -s /usr/bin/docker docker
 
 # Install Babylon
 RUN python3 -m venv /home/.babylonenv
-RUN /home/.babylonenv/bin/pip install git+https://github.com/Cosmo-Tech/Babylon.git@5.3.0
+RUN /home/.babylonenv/bin/pip install git+https://github.com/Cosmo-Tech/Babylon.git@5.4.0
 # Add babylon to ToolingBins
 WORKDIR /home/ToolingBins/
-RUN ln -s /home/.babylonenv/bin/babylon babylon
+RUN ln -sf /home/.babylonenv/bin/babylon babylon
 
 # Install kubectl as in https://kubernetes.io/docs/tasks/tools/install-kubectl-linux
 WORKDIR /home/Tooling/
