@@ -78,10 +78,10 @@ ENV PATH=$PATH:/opt/Cosmotech/css/bin \
         LC_ALL=C
 COPY --from=pkg-installer-root /opt/Cosmotech/css /opt/Cosmotech/css
 
-# Get the content brewery_sample_solution repository
+# Get the content delivery-brewery repository
 WORKDIR /home/
-COPY --from=workspace brewery_sample_solution/ /home/brewery_sample_solution/
-WORKDIR /home/brewery_sample_solution/
+COPY --from=workspace delivery-brewery/ /home/delivery-brewery/
+WORKDIR /home/delivery-brewery/
 RUN rm -rf .git .gitignore Generated
 
 # Config Tooling installation and symlinks directories
