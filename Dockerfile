@@ -127,6 +127,17 @@ RUN /home/.babylonenv/bin/pip install git+https://github.com/Cosmo-Tech/Babylon.
 WORKDIR /home/ToolingBins/
 RUN ln -sf /home/.babylonenv/bin/babylon babylon
 
+# Install CoAL
+WORKDIR /home/Tooling/
+COPY --from=workspace CosmoTech-Acceleration-Library/ /home/Tooling/CosmoTech-Acceleration-Library/
+WORKDIR /home/Tooling/CosmoTech-Acceleration-Library/
+RUN python3 -m venv /home/Tooling/CosmoTech-Acceleration-Library/.coalenv
+RUN /home/Tooling/CosmoTech-Acceleration-Library/.coalenv/bin/pip install -r ./requirements.all.txt
+RUN /home/Tooling/CosmoTech-Acceleration-Library/.coalenv/bin/pip install -r ./requirements.doc.txt
+# Add CoAL to ToolingBins
+WORKDIR /home/ToolingBins/
+RUN ln -sf /home/Tooling/CosmoTech-Acceleration-Library/.coalenv/bin/csm-data csm-data
+
 # Install csm-orc
 WORKDIR /home/Tooling/
 COPY --from=workspace run-orchestrator/ /home/Tooling/run-orchestrator/
@@ -185,6 +196,7 @@ WORKDIR /home/
 RUN echo $(git version)
 RUN echo $(docker --version)
 RUN echo $(babylon --version)
+RUN echo $(csm-data --version)
 RUN echo $(csm-orc --version)
 RUN echo $(kubectl version --client)
 RUN echo $(az --version)
