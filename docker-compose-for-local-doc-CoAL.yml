@@ -1,0 +1,32 @@
+# This docker-compose file is used to run the CoAL documentation locally.
+# With the corresponding docker image pulled from the registry,
+# from your local CosmoTech-Acceleration-Library folder, launch the following command to run the local server:
+# docker-compose -f docker-compose-for-local-doc-CoAL.yml up
+# Once the container is running, you can access the documentation at http://localhost:8000/CosmoTech-Acceleration-Library/
+
+services:
+  run-CoAL-github-io:
+    image: aks-dev-pmu.azure.platform.cosmotech.com/tenant-hippodrome/bma_debian_env:BMA_with_SDK_babylon_CoAL_csm-orc
+    container_name: coal-github-io
+    ports:
+      - "8000:8000"
+    volumes:
+      - type: bind
+        source: ./docs
+        target: /home/Tooling/CosmoTech-Acceleration-Library/docs
+        read_only: false
+      - type: bind
+        source: ./tutorial
+        target: /home/Tooling/CosmoTech-Acceleration-Library/tutorial
+        read_only: true
+      - type: bind
+        source: ./README.md
+        target: /home/Tooling/CosmoTech-Acceleration-Library/README.md
+        read_only: true
+      - type: bind
+        source: ./mkdocs.yml
+        target: /home/Tooling/CosmoTech-Acceleration-Library/mkdocs.yml
+        read_only: true
+    command: /bin/sh -c "cd /home/Tooling/CosmoTech-Acceleration-Library/ && .coalenv/bin/python -m mkdocs serve -a 0.0.0.0:8000 -w ./README.md"
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
