@@ -80,6 +80,9 @@ ENV PATH=$PATH:/opt/Cosmotech/css/bin \
 COPY --from=pkg-installer-root /opt/Cosmotech/css /opt/Cosmotech/css
 
 # Get the content delivery-brewery repository
+# This needs a local clone of the delivery-brewery repository available in the workspace defined with
+# the `--build-context workspace=` option at runtime as well as the path to this Dockerfile specified with
+# `-f` and relative to the workspace.
 WORKDIR /home/
 COPY --from=workspace delivery-brewery/ /home/delivery-brewery/
 WORKDIR /home/delivery-brewery/
@@ -128,6 +131,9 @@ WORKDIR /home/ToolingBins/
 RUN ln -sf /home/.babylonenv/bin/babylon babylon
 
 # Install CoAL
+# This needs a local clone of the CosmoTech-Acceleration-Library repository available in the workspace defined with
+# the `--build-context workspace=` option at runtime as well as the path to this Dockerfile specified with
+# `-f` and relative to the workspace.
 WORKDIR /home/Tooling/
 COPY --from=workspace CosmoTech-Acceleration-Library/ /home/Tooling/CosmoTech-Acceleration-Library/
 WORKDIR /home/Tooling/CosmoTech-Acceleration-Library/
@@ -139,6 +145,9 @@ WORKDIR /home/ToolingBins/
 RUN ln -sf /home/Tooling/CosmoTech-Acceleration-Library/.coalenv/bin/csm-data csm-data
 
 # Install csm-orc
+# This needs a local clone of the run-orchestrator repository available in the workspace defined with
+# the `--build-context workspace=` option at runtime as well as the path to this Dockerfile specified with
+# `-f` and relative to the workspace.
 WORKDIR /home/Tooling/
 COPY --from=workspace run-orchestrator/ /home/Tooling/run-orchestrator/
 WORKDIR /home/Tooling/run-orchestrator/
