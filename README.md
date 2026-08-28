@@ -3,7 +3,7 @@
 ## Build
 
 ```bash
-docker build -t <<docker_image_tag>> . --build-context workspace=../ -f ./Dockerfile --build-arg PKG_FILENAME=./cosmo_tech_platform-<version>-Release-<distribution_name>.run
+docker build -t <<docker_image_tag>> . --build-context workspace=../ -f ./Dockerfile --build-arg BUILD_SDK=<<sdk_build_switch>> --build-arg PKG_FILENAME=./cosmo_tech_platform-<version>-Release-<distribution_name>.run
 ```
 
 with:
@@ -11,7 +11,9 @@ with:
 </br>
 - **`--build-context workspace=../ -f ./Dockerfile`**: the options defining the parent folder as the workspace and the Dockerfile in the current folder as the build configuration, with the parent folder containing the necessary external repository clones (i.e. [delivery-brewery](https://github.com/Cosmo-Tech/delivery-brewery), [CosmoTech-Acceleration-Library](https://github.com/Cosmo-Tech/CosmoTech-Acceleration-Library) and [run-orchestrator](https://github.com/Cosmo-Tech/run-orchestrator); cf. the `COPY --from=workspace` commands in the Dockerfile.)
 </br>
-- **`cosmo_tech_platform-<version>-Release-<distribution_name>.run`**: the binary installer of the Cosmo Tech SDK / Studio component (properly set up to be executed with `chmod u+x` for instance.)
+- **`<<sdk_build_switch>>`** [Optional]: the flag indicating the inclusion of the Cosmo Tech SDK / Studio component in the build, either `sans_sdk` (default) or `with_sdk`.
+</br>
+- **`cosmo_tech_platform-<version>-Release-<distribution_name>.run`**: the binary installer of the Cosmo Tech SDK / Studio component (properly set up to be executed with `chmod u+x` for instance.) [Unnecessary when `BUILD_SDK=sans_sdk`]
 
 ## Compose run
 

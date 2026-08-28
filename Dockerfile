@@ -1,18 +1,45 @@
 # SPDX-FileCopyrightText: Copyright (C) 2010-2026 Cosmo Tech
 # SPDX-License-Identifier: LicenseRef-CosmoTech
 
+ARG BUILD_SDK
+
 FROM debian:stable-20260713 as builder
 
 # Avoid prompts during installation
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Install essential building tools and dependencies
+RUN apt-get update \
+        && apt-get upgrade -y \
+        && apt-get install -y \
+        build-essential \
+        # Additional dependencies for tooling
+        curl \
+        wget \
+        gnupg \
+        libcairo2 \
+        lsb-release \
+        python3-dev \
+        python3-pip \
+        python3-venv \
+        ca-certificates \
+        python3.13-venv \
+        apt-transport-https \
+        # Clean up
+        && rm -rf /var/lib/apt/lists/* \
+        && apt-get autopurge -y \
+        && apt-get clean
+
+FROM builder AS build_sans_sdk
+RUN echo "Building sans the Cosmo Tech SDK."
+
+FROM builder AS pkg-installer-root
+ARG PKG_FILENAME
 # Install the base dependencies for the Cosmo Tech Solution Development Kit (SDK), also known as Cosmo Simulation Suite (CSS)
 # as in https://cogit.cosmotech.com/projects/PROD/repos/css/browse/csmPackaging/Dockerfile.base
 RUN apt-get update \
         && apt-get upgrade -y \
         && apt-get install -y \
-        build-essential \
-        # Cosmo Tech Solution Development Kit (SDK) dependencies
         ccache \
         libdbus-1-3 \
         libegl1 \
@@ -48,15 +75,6 @@ RUN apt-get update \
         python3-pip \
         python3-venv \
         zlib1g-dev \
-        # Additional dependencies for tooling
-        curl \
-        wget \
-        gnupg \
-        libcairo2 \
-        lsb-release \
-        ca-certificates \
-        python3.13-venv \
-        apt-transport-https \
         # Clean up
         && rm -rf /var/lib/apt/lists/* \
         && apt-get autopurge -y \
@@ -64,20 +82,20 @@ RUN apt-get update \
 
 # Install the Cosmo Tech Solution Development Kit (SDK), also known as Cosmo Simulation Suite (CSS)
 # as in https://cogit.cosmotech.com/projects/PROD/repos/css/browse/csmPackaging/Dockerfile.test
-# Run the CSS installer
-FROM builder AS pkg-installer-root
-ARG PKG_FILENAME
 COPY $PKG_FILENAME /pkg.run
 RUN chmod +x /pkg.run
 RUN mkdir -p /opt/Cosmotech/css
 RUN /pkg.run install --confirm-command --accept-licenses --root /opt/Cosmotech/css
-ARG PKG_RELEASE_VERSION
 
-# The final image, based on the builder, with the CSS binaries copied from the pkg-installer-root stage
-FROM builder
+# The image based on the builder with the CSS binaries copied from the pkg-installer-root stage
+FROM builder AS build_with_sdk
+RUN echo "Building with the Cosmo Tech SDK."
 ENV PATH=$PATH:/opt/Cosmotech/css/bin \
         LC_ALL=C
 COPY --from=pkg-installer-root /opt/Cosmotech/css /opt/Cosmotech/css
+
+# The final image, with or sans SDK, to be used for the following stages
+FROM build_$BUILD_SDK
 
 # Get the content delivery-brewery repository
 # This needs a local clone of the delivery-brewery repository available in the workspace defined with
