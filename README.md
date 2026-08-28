@@ -29,5 +29,13 @@ docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -e WAYLAND_DISPL
 
 with:
 - `-e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -e WAYLAND_DISPLAY=$WAYLAND_DISPLAY -v /mnt/wslg:/mnt/wslg -it -v /var/run/docker.sock:/var/run/docker.sock`: parameters allowing the GUI of the Cosmo Tech Studio from the container with WSL on Windows
-- `/home/bma_babylon_folder`: a local Windows folder (in the `/home/` path of the WSL installation) to be mounted in the existing `bma_babylon_folder` inside the container
+</br>
+- `/home/bma_babylon_folder`: a local Windows folder (manually created in the `/home/` path of the WSL installation) to be mounted in the existing `bma_babylon_folder` inside the container
+</br>
 - `<<docker_image_id>>`: the `IMAGE ID` of the corresponding Docker image as in the output of the `docker images` commands
+
+## Run on Linux
+
+```bash
+docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v ./bma_babylon_folder:/home/bma_babylon_folder --rm --entrypoint /bin/bash <<docker_image_id>>
+```
